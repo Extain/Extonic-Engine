@@ -1,14 +1,18 @@
 #pragma once
 #include "Window.h"
+#include <chrono>
+
 
 class Engine {
 public:
+	Engine(const char* title, int width, int height);
 	void init();
 
 private:
-	Engine(std::string title, uint32_t width, uint32_t height);
 	~Engine();
-	bool isRunning;
+	void loop();
+	void update(float delta);
+	void render();
 	int ups;
 	int fps;
 	Window* window;

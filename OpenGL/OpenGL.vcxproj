@@ -120,12 +120,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\lenns\source\repos\OpenGL\Extonic-Engine\libs\glad\include;C:\Users\lenns\source\repos\OpenGL\Extonic-Engine\libs\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\trikm\source\repos\Extain\Extonic-Engine\libs\glfw\include;C:\Users\trikm\source\repos\Extain\Extonic-Engine\libs\glad\include;C:\Users\lenns\source\repos\OpenGL\Extonic-Engine\libs\glad\include;C:\Users\lenns\source\repos\OpenGL\Extonic-Engine\libs\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\lenns\source\repos\OpenGL\Extonic-Engine\libs\glfw\lib-vc2019;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\trikm\source\repos\Extain\Extonic-Engine\libs\glfw\lib-vc2019;C:\Users\lenns\source\repos\OpenGL\Extonic-Engine\libs\glfw\lib-vc2019;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="engine\Engine.h" />
     <ClInclude Include="engine\Window.h" />
+    <ClInclude Include="IGame.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

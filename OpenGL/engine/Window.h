@@ -1,18 +1,27 @@
 #pragma once
 #include <cstdint>
 #include <string>
+#include <glad/gl.h>
+#include <GLFW\glfw3.h>
 
 class Window {
 public:
 
-	Window(std::string title, uint32_t width, uint32_t height);
+	Window(const char *title, int width, int height);
 
-	virtual uint32_t getWidth() { return _width; }
-	virtual uint32_t getHeight() { return _height; }
-	virtual long getWindowHandle() { return windowHandle; }
+	virtual int& getWidth() { return _width; }
+	virtual int& getHeight() { return _height; }
+	virtual const char& getTitle() { return *_title; }
+	virtual GLFWwindow& getWindowHandle() { return *windowHandle; }
+
+	void update();
+	void swapBuffers();
+	bool shouldClose();
 private:
-	std::string title;
-	uint32_t _width;
-	uint32_t _height;
-	long windowHandle;
+	void onResize(int width, int height);
+	int createWindow();
+	const char *_title;
+	int _width;
+	int _height;
+	GLFWwindow* windowHandle;
 };
