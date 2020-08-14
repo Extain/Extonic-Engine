@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "engine/Engine.h"
+#include "DummyGame.h"
 
 
 
@@ -11,8 +12,8 @@
 
 int main()
 {
-    Engine* engine = new Engine("Testing", 800, 600);
-
+    DummyGame game;
+    Extonic::Engine* engine = new Extonic::Engine(game, "Testing", 800, 600);
     engine->init();
     
     return 0;

@@ -1,19 +1,24 @@
 #pragma once
 #include "Window.h"
+#include "../IGame.h"
 #include <chrono>
 
 
-class Engine {
-public:
-	Engine(const char* title, int width, int height);
-	void init();
+namespace Extonic {
+	class Engine {
+	public:
+		Engine(IGame& game, const char* title, int width, int height);
+		void init();
+		virtual void setGame(const IGame& gme) { this->game = gme; }
 
-private:
-	~Engine();
-	void loop();
-	void update(float delta);
-	void render();
-	int ups;
-	int fps;
-	Window* window;
-};
+	private:
+		~Engine();
+		void loop();
+		void update(float delta);
+		void render();
+		IGame& game;
+		int ups;
+		int fps;
+		Window* window;
+	};
+}

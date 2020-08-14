@@ -6,8 +6,8 @@
       ],
       "name": "x64-Debug",
       "includePath": [
-        "/libs/glad/include",
-        "/libs/glfw/include",
+        "$(SolutionDir)/libs/glad/include",
+        "$(SolutionDir)/libs/glfw/include",
         "${env.INCLUDE}",
         "${workspaceRoot}\\**"
       ],

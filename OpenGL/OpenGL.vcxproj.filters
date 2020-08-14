@@ -19,11 +19,26 @@
     <Filter Include="Header Files\engine">
       <UniqueIdentifier>{9d5e816c-4aae-4d53-be99-d904759f469f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\engine\shaders">
+      <UniqueIdentifier>{41cd7775-5b90-4c45-8cba-261affba4d93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\engine\Utils">
+      <UniqueIdentifier>{7e576151-b864-48d5-a249-c7f6595ef5a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine\shaders">
+      <UniqueIdentifier>{bd750000-5795-4f73-942d-61c601643cda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine\Utils">
+      <UniqueIdentifier>{f0540065-271f-412d-8b6c-433e5298a0db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\engine\objects">
+      <UniqueIdentifier>{82335824-d427-4949-b6f9-6bd7c0c425b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs">
+      <UniqueIdentifier>{21f7aee9-d77d-4685-a8e2-9b4c4bbb1cd5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="OpenGL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\libs\glad\src\gl.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -32,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="engine\Engine.cpp">
       <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\shaders\ShaderProgram.cpp">
+      <Filter>Source Files\engine\shaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -43,6 +61,15 @@
     </ClInclude>
     <ClInclude Include="IGame.h">
       <Filter>Header Files\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utils\Utility.h">
+      <Filter>Header Files\engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\engine\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\shaders\ShaderProgram.h">
+      <Filter>Header Files\engine\shaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
