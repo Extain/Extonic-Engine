@@ -5,6 +5,9 @@
 #include <iostream>
 #include <functional>
 #include "engine/shaders/ShaderProgram.h"
+#include <Texture.h>
+
+#define LOG(x) std::cout << x << std::endl;
 
 class DummyGame : public Extonic::IGame
 {
@@ -20,8 +23,10 @@ private:
 	unsigned int VBO;
 	unsigned int EBO;
 	int vertexColorLoc;
+	Extonic::Texture texture;
 
 	void createMesh();
+	void createTexture();
 };
 
 #endif

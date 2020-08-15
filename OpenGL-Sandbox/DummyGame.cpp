@@ -3,8 +3,6 @@
 #include <GLFW\glfw3.h>
 #include <engine\Utils\Utility.h>
 
-
-
 void DummyGame::onInit()
 {
 	std::cout << "Initialized" << std::endl;
@@ -28,9 +26,10 @@ void DummyGame::onRender()
 	glClearColor(0.2f, 0.3f, 0.3f, 1);
 
 	program->use();
+	texture.bind();
 	glBindVertexArray(VAO);
 
-	program->uniform4f("color", 0, greenValue, 0.0f, 0.0f);
+	program->uniform4f("color", 1, 1, 1.0f, 1.0f);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	glBindVertexArray(0);
@@ -47,24 +46,21 @@ void DummyGame::setupAttribs()
 */
 	program->createDefaultShader();
 	createMesh();
+	createTexture();
 }
 
 void DummyGame::createMesh()
 {
 	float vertices[] = {
-	 0.5f,  0.5f, 0.0f,  // top right
-	 0.5f, -0.5f, 0.0f,  // bottom right
-	-0.5f, -0.5f, 0.0f,  // bottom left
-	-0.5f,  0.5f, 0.0f   // top left 
+		// positions          // colors           // texture coords
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
 	};
 	unsigned int indices[] = {  // note that we start from 0!
 		0, 1, 3,   // first triangle
 		1, 2, 3    // second triangle
-	};
-	unsigned int texCoords[] = {
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-		0.5f, 1.0f
 	};
 
 	// Firstly generate the vertex arrays
@@ -92,13 +88,28 @@ void DummyGame::createMesh()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// Tell the vertex array to look at the vertices, and point to it.
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 
 	// Unbind the vertex array.
 	glEnableVertexAttribArray(0);
 
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+}
+
+void DummyGame::createTexture()
+{
+	texture.createTexture("stone_floor.png");
+
+	program->use();
+	program->uniform1i("ourTexture", 0);
+	program->unbind();
 }
 
 DummyGame::~DummyGame()

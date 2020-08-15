@@ -64,6 +64,11 @@ namespace Extonic {
 		glDeleteShader(fragmentID);
 	}
 
+	void ShaderProgram::uniform1i(const std::string& uniform, int value)
+	{
+		glUniform1i(glGetUniformLocation(this->shaderID, uniform.c_str()), value);
+	}
+
 	void ShaderProgram::uniform4f(const std::string& uniform, glm::vec4& value)
 	{
 		glUniform4fv(glGetUniformLocation(this->shaderID, uniform.c_str()), 1, &value[0]);
@@ -76,7 +81,7 @@ namespace Extonic {
 
 	void ShaderProgram::matrix4f(const std::string& uniform, glm::mat4& value)
 	{
-		//glUniformMatrix4fv(glGetUniformLocation(this->shaderID, uniform.c_str()), &value[0]);
+		//glUniformMatrix4fv(glGetUniformLocation(this->shaderID, uniform.c_str()), value);
 	}
 
 
