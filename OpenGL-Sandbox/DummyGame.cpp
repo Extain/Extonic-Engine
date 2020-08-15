@@ -1,6 +1,7 @@
 #include "DummyGame.h"
 #include <glad\gl.h>
 #include <GLFW\glfw3.h>
+#include <engine\Utils\Utility.h>
 
 
 
@@ -9,6 +10,8 @@ void DummyGame::onInit()
 	std::cout << "Initialized" << std::endl;
 	program = new Extonic::ShaderProgram();
 	setupAttribs();
+
+	
 }
 
 void DummyGame::onUpdate(float delta)
@@ -27,7 +30,7 @@ void DummyGame::onRender()
 	program->use();
 	glBindVertexArray(VAO);
 
-	glUniform4f(vertexColorLoc, greenValue, greenValue, 0.0f, 1.0f);
+	program->uniform4f("color", 0, greenValue, 0.0f, 0.0f);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	glBindVertexArray(0);
@@ -36,6 +39,17 @@ void DummyGame::onRender()
 }
 
 void DummyGame::setupAttribs()
+{
+/*  
+	const char *vertexCode = Extonic::Util::loadFileAsString("vertex.glsl").c_str();
+	const char *fragmentCode = Extonic::Util::loadFileAsString("fragment.glsl").c_str();
+	program->createShader(vertexCode, fragmentCode); 
+*/
+	program->createDefaultShader();
+	createMesh();
+}
+
+void DummyGame::createMesh()
 {
 	float vertices[] = {
 	 0.5f,  0.5f, 0.0f,  // top right
@@ -47,33 +61,44 @@ void DummyGame::setupAttribs()
 		0, 1, 3,   // first triangle
 		1, 2, 3    // second triangle
 	};
+	unsigned int texCoords[] = {
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.5f, 1.0f
+	};
 
+	// Firstly generate the vertex arrays
 	glGenVertexArrays(1, &VAO);
-	//LOGGER->Log("Generating vertex arrays to ID: %s", VAO);
+
+	// Then bind the vertex array so we can start applying data to it
 	glBindVertexArray(VAO);
 
+	// Generate the vertex buffer object
 	glGenBuffers(1, &VBO);
-	//LOGGER->Log("Binding buffer to ID: %s", VBO);
 
+	// Generate the element buffer object
 	glGenBuffers(1, &EBO);
-	//LOGGER->Log("Generating element buffer object to ID: %s", EBO);
 
+	// Bind the buffer so we can upload the vertices.
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	// Create the buffer data for the size of the vertices then load vertices into it.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	//LOGGER->Log("Uploading data to buffer, size: %s", sizeof(vertices));
 
-
+	// Bind the element buffer to upload indices.
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	//LOGGER->Log("Uploading data to element buffer, size: %s", sizeof(indices));
 
+	// Create buffer data that's the size of indices, and place indices in it.
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	// Tell the vertex array to look at the vertices, and point to it.
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	// Unbind the vertex array.
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
-	vertexColorLoc = glGetUniformLocation(program->shaderID, "color");
 }
 
 DummyGame::~DummyGame()

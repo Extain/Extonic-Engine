@@ -20,6 +20,8 @@ private:
 	unsigned int VBO;
 	unsigned int EBO;
 	int vertexColorLoc;
+
+	void createMesh();
 };
 
 #endif

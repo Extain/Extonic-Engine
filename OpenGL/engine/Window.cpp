@@ -45,6 +45,16 @@ namespace Extonic {
                 {
                     glfwSetWindowShouldClose(window, GLFW_TRUE);
                 }
+
+                if (key == GLFW_KEY_P)
+                {
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                }
+
+                if (key == GLFW_KEY_O)
+                {
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                }
             }
         });
 

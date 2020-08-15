@@ -154,14 +154,18 @@
     <ClCompile Include="engine\Engine.cpp" />
     <ClCompile Include="engine\shaders\ShaderProgram.cpp" />
     <ClCompile Include="engine\Window.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Engine.h" />
     <ClInclude Include="engine\shaders\ShaderProgram.h" />
     <ClInclude Include="engine\Utils\Utility.h" />
     <ClInclude Include="engine\Window.h" />
+    <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IGame.h" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
