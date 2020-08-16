@@ -81,7 +81,7 @@ namespace Extonic {
 
 	void ShaderProgram::matrix4f(const std::string& uniform, glm::mat4& value)
 	{
-		//glUniformMatrix4fv(glGetUniformLocation(this->shaderID, uniform.c_str()), value);
+		glUniformMatrix4fv(glGetUniformLocation(this->shaderID, uniform.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 	}
 
 

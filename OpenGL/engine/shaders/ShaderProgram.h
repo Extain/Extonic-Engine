@@ -4,7 +4,9 @@
 #include <string>
 #include <glad\gl.h>
 #include <ext\vector_float4.hpp>
-#include <mat4x4.hpp>
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
 
 
 namespace Extonic {
@@ -20,7 +22,7 @@ namespace Extonic {
         void uniform1i(const std::string& uniform, int value);
         void uniform4f(const std::string &uniform, glm::vec4 &value);
         void uniform4f(const std::string& uniform, float x, float y, float z, float a);
-        void matrix4f(const std::string& uniform, glm::mat4x4 &value);
+        void matrix4f(const std::string& uniform, glm::mat4 &value);
 
         void createShader(const char* vs, const char* fs);
         void createDefaultShader();
@@ -32,9 +34,12 @@ namespace Extonic {
             "layout (location = 2) in vec2 aTexCoord; \n"
             "out vec4 ourColor; \n"
             "out vec2 TexCoord; \n"
+            "uniform mat4 model; \n"
+            "uniform mat4 view; \n"
+            "uniform mat4 projection; \n"
             "void main()\n"
             "{\n"
-            "   gl_Position = vec4(aPos, 1.0); \n"
+            "   gl_Position = projection * view * model * vec4(aPos, 1.0); \n"
             "   ourColor = aColor; \n"
             "   TexCoord = aTexCoord; \n"
             "}\0";
