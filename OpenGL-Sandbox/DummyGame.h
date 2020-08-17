@@ -8,6 +8,7 @@
 #include <Texture.h>
 #include <GLFW\glfw3.h>
 #include <Camera.h>
+#include <entt.hpp>
 
 #define LOG(x) std::cout << x << std::endl;
 
@@ -15,7 +16,6 @@ class DummyGame : public Extonic::IGame
 {
 public:
 	virtual void onInit(GLFWwindow *window);
-	virtual void processInput(GLFWwindow* window);
 	virtual void onUpdate(float delta);
 	virtual void onRender();
 	~DummyGame();
@@ -32,6 +32,7 @@ private:
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 	void createMesh();
 	void createTexture();
+	entt::registry m_Registry;
 };
 
 #endif

@@ -2,11 +2,13 @@
 #include <iostream>
 
 namespace Extonic {
+    Window* Window::_Instance = nullptr;
     Window::Window(const char* title, int width, int height)
     {
         this->_title = title;
         this->_width = width;
         this->_height = height;
+        _Instance = this;
 
         createWindow();
     }

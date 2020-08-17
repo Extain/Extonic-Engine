@@ -71,9 +71,6 @@
     <ClInclude Include="engine\Utils\Utility.h">
       <Filter>Header Files\engine\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files\engine\objects</Filter>
-    </ClInclude>
     <ClInclude Include="engine\shaders\ShaderProgram.h">
       <Filter>Header Files\engine\shaders</Filter>
     </ClInclude>
@@ -85,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\engine\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files\engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

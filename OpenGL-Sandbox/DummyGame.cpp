@@ -1,8 +1,17 @@
 #include "DummyGame.h"
 #include <engine\Utils\Utility.h>
 #include <engine\Engine.cpp>
+#include <Input.h>
 
 Extonic::Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+
+struct TagComponent
+{
+	std::string Tag;
+	TagComponent() = default;
+	TagComponent(const TagComponent&) = default;
+	TagComponent(const std::string& tag) : Tag(tag) {}	
+};
 
 void DummyGame::onInit(GLFWwindow *window)
 {
@@ -13,36 +22,11 @@ void DummyGame::onInit(GLFWwindow *window)
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
+	entt::entity entity = m_Registry.create();
+	m_Registry.emplace<TagComponent>(entity, "test");
+
 	glEnable(GL_DEPTH_TEST);
 	
-}
-
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-void DummyGame::processInput(GLFWwindow* window)
-{
-	const float cameraSpeed = 0.05f;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		camera.ProcessKeyboard(Extonic::Camera_Movement::FORWARD, cameraSpeed);
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		camera.ProcessKeyboard(Extonic::Camera_Movement::BACKWARD, cameraSpeed);
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		camera.ProcessKeyboard(Extonic::Camera_Movement::LEFT, cameraSpeed);
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		camera.ProcessKeyboard(Extonic::Camera_Movement::RIGHT, cameraSpeed);
-	}
-
 }
 
 bool firstMouse = true;
@@ -57,6 +41,52 @@ float yoffset;
 
 void DummyGame::mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
+	
+	
+}
+
+void DummyGame::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	camera.ProcessMouseScroll(yoffset);
+}
+
+float deltaTime = 0;
+float lastFrame = 0;
+
+void DummyGame::onUpdate(float delta)
+{
+	const float cameraSpeed = 2.5f * delta;
+
+	if (Extonic::Input::isKeyPressed(GLFW_KEY_W))
+	{
+		camera.ProcessKeyboard(Extonic::Camera_Movement::FORWARD, cameraSpeed);
+	}
+
+	if (Extonic::Input::isKeyPressed(GLFW_KEY_S))
+	{
+		camera.ProcessKeyboard(Extonic::Camera_Movement::BACKWARD, cameraSpeed);
+	}
+
+	if (Extonic::Input::isKeyPressed(GLFW_KEY_A))
+	{
+		camera.ProcessKeyboard(Extonic::Camera_Movement::LEFT, cameraSpeed);
+	}
+	if (Extonic::Input::isKeyPressed(GLFW_KEY_D))
+	{
+		camera.ProcessKeyboard(Extonic::Camera_Movement::RIGHT, cameraSpeed);
+	}
+	if (Extonic::Input::isKeyPressed(GLFW_KEY_Q))
+	{
+		camera.ProcessKeyboard(Extonic::Camera_Movement::UP, cameraSpeed);
+	}
+	if (Extonic::Input::isKeyPressed(GLFW_KEY_E))
+	{
+		camera.ProcessKeyboard(Extonic::Camera_Movement::DOWN, cameraSpeed);
+	}
+
+	float xpos = Extonic::Input::GetMouseX();
+	float ypos = Extonic::Input::GetMouseY();
+
 	if (firstMouse)
 	{
 		lastX = xpos;
@@ -71,17 +101,6 @@ void DummyGame::mouse_callback(GLFWwindow *window, double xpos, double ypos)
 	lastY = ypos;
 
 	camera.ProcessMouseMovement(xoffset, yoffset);
-	
-}
-
-void DummyGame::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	camera.ProcessMouseScroll(yoffset);
-}
-
-void DummyGame::onUpdate(float delta)
-{
-
 }
 
 glm::vec3 cubePositions[] = {
@@ -115,6 +134,7 @@ void DummyGame::onRender()
 	program->matrix4f("view", view);
 
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
+	//glm::mat4 projection = glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, 0.1f, 100.0f);
 
 	program->matrix4f("projection", projection);
 
@@ -122,7 +142,7 @@ void DummyGame::onRender()
 	{
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, cubePositions[i]);
-		float angle = 20.0f * i;
+		float angle = 20.0f * glfwGetTime();
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 		program->matrix4f("model", model);
 
@@ -137,18 +157,18 @@ void DummyGame::onRender()
 
 void DummyGame::setupAttribs()
 {
-/*  
-	const char *vertexCode = Extonic::Util::loadFileAsString("vertex.glsl").c_str();
-	const char *fragmentCode = Extonic::Util::loadFileAsString("fragment.glsl").c_str();
-	program->createShader(vertexCode, fragmentCode); 
-*/
+  
+	/*const char *vertexCode = Extonic::Util::loadShader("resources/shaders/vertex2.vs");
+	const char *fragmentCode = Extonic::Util::loadShader("resources/shaders/fragment2.fs");
+	program->createShader(vertexCode, fragmentCode); */
+
 	program->createDefaultShader();
 	createMesh();
 	createTexture();
 
 
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::rotate(model, glm::radians(-70.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	glm::mat4 view = glm::mat4(1.0f);
 	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));

@@ -9,7 +9,6 @@ namespace Extonic {
 	{
 	public:
 		virtual void onInit(GLFWwindow *window) = 0;
-		virtual void processInput(GLFWwindow* window) = 0;
 		virtual void onUpdate(float delta) = 0;
 		virtual void onRender() = 0;
 	};

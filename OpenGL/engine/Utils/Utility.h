@@ -22,28 +22,29 @@ namespace Extonic {
 
         const char* loadShader(const char* path)
         {
-            std::string shaderCode;
+            std::string shader;
             std::ifstream shaderFile;
-
-            shaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-
             try
             {
-                shaderFile.open(path);
+                shaderFile.open(path, std::ios::in);
                 std::stringstream shaderStream;
 
                 shaderStream << shaderFile.rdbuf();
 
+                std::cout << shaderStream.str() << std::endl;
+
                 shaderFile.close();
 
-                shaderCode = shaderStream.str();
+                shader = shaderStream.str();
             }
             catch (std::ifstream::failure e)
             {
                 std::cout << "ERROR::SHADER::FAILED_TO_READ_FILE" << std::endl;
             }
 
-            return shaderCode.c_str();
+            const char* shaderCode = shader.c_str();
+
+            return shaderCode;
         }
 
         // Get current date/time, format is YYYY-MM-DD.HH:mm:ss

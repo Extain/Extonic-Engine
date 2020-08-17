@@ -19,6 +19,8 @@ namespace Extonic {
 	{
 
 		double timeDelta = 1 / 60;
+		float deltaTime = 0;
+		float lastTime = 0;
 		double accumulator = 0;
 
 		while (!window->shouldClose())
@@ -29,7 +31,9 @@ namespace Extonic {
 			if (accumulator >= timeDelta)
 			{
 				accumulator -= timeDelta;
-				update(timeDelta);
+				deltaTime = startTime - lastTime;
+				update(deltaTime);
+				lastTime = startTime;
 				now += timeDelta;
 			}
 
@@ -42,7 +46,6 @@ namespace Extonic {
 	void Engine::update(float delta)
 	{
 		window->update();
-		this->game.processInput(&window->getWindowHandle());
 		this->game.onUpdate(delta);
 	}
 

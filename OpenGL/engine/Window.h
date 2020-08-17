@@ -18,6 +18,8 @@ namespace Extonic {
 		void update();
 		void swapBuffers();
 		bool shouldClose();
+
+		static Window& Get() { return *_Instance; }
 	private:
 		void onResize(int width, int height);
 		int createWindow();
@@ -25,5 +27,6 @@ namespace Extonic {
 		int _width;
 		int _height;
 		GLFWwindow* windowHandle;
+		static Window* _Instance;
 	};
 }
