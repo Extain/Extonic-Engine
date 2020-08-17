@@ -69,6 +69,8 @@ namespace Extonic {
         this->windowHandle = window;
 
         glViewport(0, 0, _width, _height);
+
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
     void Window::onResize(int width, int height)

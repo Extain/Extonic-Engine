@@ -37,6 +37,9 @@
     <Filter Include="libs">
       <UniqueIdentifier>{21f7aee9-d77d-4685-a8e2-9b4c4bbb1cd5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\engine\camera">
+      <UniqueIdentifier>{bca89f29-064c-4c73-858f-2d4421ca6d77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\libs\glad\src\gl.c">
@@ -79,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Header Files\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\engine\camera</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

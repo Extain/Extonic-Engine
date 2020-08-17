@@ -1,15 +1,82 @@
 #include "DummyGame.h"
-#include <glad\gl.h>
-#include <GLFW\glfw3.h>
 #include <engine\Utils\Utility.h>
+#include <engine\Engine.cpp>
 
-void DummyGame::onInit()
+Extonic::Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+
+void DummyGame::onInit(GLFWwindow *window)
 {
 	std::cout << "Initialized" << std::endl;
 	program = new Extonic::ShaderProgram();
 	setupAttribs();
 
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+
+	glEnable(GL_DEPTH_TEST);
 	
+}
+
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+void DummyGame::processInput(GLFWwindow* window)
+{
+	const float cameraSpeed = 0.05f;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		camera.ProcessKeyboard(Extonic::Camera_Movement::FORWARD, cameraSpeed);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		camera.ProcessKeyboard(Extonic::Camera_Movement::BACKWARD, cameraSpeed);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		camera.ProcessKeyboard(Extonic::Camera_Movement::LEFT, cameraSpeed);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		camera.ProcessKeyboard(Extonic::Camera_Movement::RIGHT, cameraSpeed);
+	}
+
+}
+
+bool firstMouse = true;
+float yaw = -90.0f;
+float pitch = 0.0f;
+float lastX = 400;
+float lastY = 300;
+float fov = 45.0f;
+
+float xoffset;
+float yoffset;
+
+void DummyGame::mouse_callback(GLFWwindow *window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	xoffset = xpos - lastX;
+	yoffset = lastY - ypos;
+
+	lastX = xpos;
+	lastY = ypos;
+
+	camera.ProcessMouseMovement(xoffset, yoffset);
+	
+}
+
+void DummyGame::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	camera.ProcessMouseScroll(yoffset);
 }
 
 void DummyGame::onUpdate(float delta)
@@ -32,15 +99,24 @@ glm::vec3 cubePositions[] = {
 
 void DummyGame::onRender()
 {
+
 	float timeValue = glfwGetTime();
 	float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
 
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.2f, 0.3f, 0.3f, 1);
 
 	program->use();
 	texture.bind();
 	glBindVertexArray(VAO);
+
+	glm::mat4 view = camera.GetViewMatrix();
+
+	program->matrix4f("view", view);
+
+	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
+
+	program->matrix4f("projection", projection);
 
 	for (unsigned int i = 0; i < 10; i++)
 	{
@@ -78,12 +154,11 @@ void DummyGame::setupAttribs()
 	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
 	glm::mat4 projection = glm::mat4(1.0f);
-	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+	
 
 	program->use();
 	program->matrix4f("model", model);
 	program->matrix4f("view", view);
-	program->matrix4f("projection", projection);
 	program->unbind();
 }
 

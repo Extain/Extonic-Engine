@@ -11,7 +11,7 @@ namespace Extonic {
 
 	void Engine::init()
 	{
-		this->game.onInit();
+		this->game.onInit(&window->getWindowHandle());
 		loop();
 	}
 
@@ -42,6 +42,7 @@ namespace Extonic {
 	void Engine::update(float delta)
 	{
 		window->update();
+		this->game.processInput(&window->getWindowHandle());
 		this->game.onUpdate(delta);
 	}
 
