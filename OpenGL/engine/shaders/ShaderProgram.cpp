@@ -69,6 +69,11 @@ namespace Extonic {
 		glUniform1i(glGetUniformLocation(this->shaderID, uniform.c_str()), value);
 	}
 
+	void ShaderProgram::uniform1f(const std::string& uniform, float value)
+	{
+		glUniform1f(glGetUniformLocation(this->shaderID, uniform.c_str()), value);
+	}
+
 	void ShaderProgram::uniform4f(const std::string& uniform, glm::vec4& value)
 	{
 		glUniform4fv(glGetUniformLocation(this->shaderID, uniform.c_str()), 1, &value[0]);
@@ -77,6 +82,16 @@ namespace Extonic {
 	void ShaderProgram::uniform4f(const std::string& uniform, float x, float y, float z, float a)
 	{
 		glUniform4f(glGetUniformLocation(this->shaderID, uniform.c_str()), x, y, z, a);
+	}
+
+	void ShaderProgram::uniform3f(const std::string& uniform, glm::vec3& value)
+	{
+		glUniform3fv(glGetUniformLocation(this->shaderID, uniform.c_str()), 1, &value[0]);
+	}
+
+	void ShaderProgram::uniform3f(const std::string& uniform, float x, float y, float z)
+	{
+		glUniform3f(glGetUniformLocation(this->shaderID, uniform.c_str()), x, y, z);
 	}
 
 	void ShaderProgram::matrix4f(const std::string& uniform, glm::mat4& value)

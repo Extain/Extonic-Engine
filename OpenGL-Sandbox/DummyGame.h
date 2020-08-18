@@ -7,7 +7,7 @@
 #include <functional>
 #include <Texture.h>
 #include <GLFW\glfw3.h>
-#include <Camera.h>
+#include <PerspectiveCamera.h>
 #include <entt.hpp>
 
 #define LOG(x) std::cout << x << std::endl;
@@ -22,6 +22,7 @@ public:
 private:
 	Extonic::ShaderProgram* program;
 	void setupAttribs();
+	unsigned int lightVAO;
 	unsigned int VAO;
 	unsigned int VBO;
 	unsigned int EBO;
@@ -30,6 +31,7 @@ private:
 
 	static void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+	void setupLights();
 	void createMesh();
 	void createTexture();
 	entt::registry m_Registry;

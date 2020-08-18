@@ -138,7 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)libs\glm\;$(SolutionDir)libs\glfw\include;$(SolutionDir)libs\glad\include;$(SolutionDir)libs\stb\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\entt\include;$(SolutionDir)libs\glm\;$(SolutionDir)libs\glfw\include;$(SolutionDir)libs\glad\include;$(SolutionDir)libs\stb\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,9 +162,11 @@
     <ClInclude Include="engine\shaders\ShaderProgram.h" />
     <ClInclude Include="engine\Utils\Utility.h" />
     <ClInclude Include="engine\Window.h" />
+    <ClInclude Include="FirstPersonCamera.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="IGame.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

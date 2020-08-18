@@ -86,5 +86,11 @@
     <ClInclude Include="Input.h">
       <Filter>Header Files\engine</Filter>
     </ClInclude>
+    <ClInclude Include="PerspectiveCamera.h">
+      <Filter>Header Files\engine\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="FirstPersonCamera.h">
+      <Filter>Header Files\engine\camera</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

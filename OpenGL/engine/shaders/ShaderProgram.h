@@ -23,6 +23,9 @@ namespace Extonic {
         void uniform4f(const std::string &uniform, glm::vec4 &value);
         void uniform4f(const std::string& uniform, float x, float y, float z, float a);
         void matrix4f(const std::string& uniform, glm::mat4 &value);
+        void uniform3f(const std::string& uniform, glm::vec3& value);
+        void uniform3f(const std::string& uniform, float x, float y, float z);
+        void uniform1f(const std::string& uniform, float value);
 
         void createShader(const char* vs, const char* fs);
         void createDefaultShader();
