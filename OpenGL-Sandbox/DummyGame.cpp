@@ -1,109 +1,14 @@
 #include "DummyGame.h"
-#include <engine\Utils\Utility.h>
-#include <engine\Engine.cpp>
-#include <Input.h>
+
 
 Extonic::PerspectiveCamera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 Extonic::ShaderProgram lightShader, lightCubeShader;
+Extonic::LightShader* lightsShader;
 glm::vec3 coral(1.0f, 1.0f, 1.0f);
 glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 glm::vec3 toyColor(1.0f, 0.5f, 0.31f);
 glm::vec3 result = lightColor * toyColor;
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-
-const char* lightVertex = {
-	"#version 330 core\n"
-	"layout (location = 0) in vec3 aPos;\n"
-	"layout (location = 1) in vec3 aNormal; \n"
-	"layout (location = 2) in vec2 aTexCoord; \n"
-	"uniform mat4 model;\n"
-	"uniform mat4 view;\n"
-	"uniform mat4 projection;\n"
-	"out vec3 Normal; \n"
-	"out vec3 FragPos; \n"
-	"out vec2 TexCoord; \n"
-	"void main()\n"
-	"{\n"
-	"gl_Position = projection * view * model * vec4(aPos, 1.0);\n"
-	"FragPos = vec3(model * vec4(aPos, 1.0)); \n"
-	"Normal = mat3(transpose(inverse(model))) * aNormal; \n"
-	"TexCoord = aTexCoord; \n"
-	"}\0"
-};
-
-const char* lightFragment = {
-	"#version 330 core\n"
-	"out vec4 FragColor;\n"
-	"in vec3 Normal; \n"
-	"in vec3 FragPos; \n"
-	"in vec2 TexCoord; \n"
-	"uniform vec3 objectColor;\n"
-	"uniform vec3 lightColor;\n"
-	"uniform vec3 lightPos; \n"
-	"uniform vec3 viewPos; \n"
-	"uniform float time; \n"
-	"struct Material {\n"
-	"sampler2D diffuse; \n"
-	"sampler2D specular; \n"
-	"sampler2D emission; \n"
-	"float shininess; \n"
-	"};\n"
-	"struct Light {\n"
-	"vec3 position; \n"
-	"vec3 ambient; \n"
-	"vec3 diffuse; \n"
-	"vec3 specular; \n"
-	"};\n"
-	"uniform Material material; \n"
-	"uniform Light light; \n"
-	"vec3 calculate_emission() \n"
-	"{\n"
-	"vec3 show = step(vec3(1.0), vec3(1.0) - texture(material.specular, TexCoord).rgb);\n"
-	"return texture(material.emission, TexCoord).rgb * show; \n"
-	"}\n"
-	"void main()\n"
-	"{\n"
-	"float specularStrength = 0.5; \n"
-	"float ambientStrength = 0.8; \n"
-	"vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoord)); \n"
-	"vec3 norm = normalize(Normal); \n"
-	"vec3 lightDir = normalize(lightPos - FragPos); \n"
-	"float diff = max(dot(norm, lightDir), 0.0); \n"
-	"vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoord)); \n"
-	"vec3 viewDir = normalize(viewPos - FragPos); \n"
-	"vec3 reflectDir = reflect(-lightDir, norm); \n"
-	"float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess); \n"
-	"vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoord));\n"
-	"vec3 emission = calculate_emission(); \n"
-	"emission = emission * (sin(time) * 0.5 + 0.5) * 2.0; \n"
-	"vec3 result = ambient + diffuse + specular + emission;\n"
-	"FragColor = vec4(result, 1.0);\n"
-	"}\0"
-	
-
-};
-
-const char* lightCubeVertex = {
-	"#version 330 core\n"
-	"layout (location = 0) in vec3 aPos;\n"
-	"uniform mat4 model;\n"
-	"uniform mat4 view;\n"
-	"uniform mat4 projection;\n"
-	"void main()\n"
-	"{\n"
-	"gl_Position = projection * view * model * vec4(aPos, 1.0);\n"
-	"}\0"
-};
-
-const char* lightCubeFragment = {
-	"#version 330 core\n"
-	"out vec4 FragColor;\n"
-	"uniform vec3 lightColor; \n"
-	"void main()\n"
-	"{\n"
-	"FragColor = vec4(lightColor, 1.0);\n"
-	"}\0"
-};
 
 struct TagComponent
 {
@@ -113,12 +18,43 @@ struct TagComponent
 	TagComponent(const std::string& tag) : Tag(tag) {}	
 };
 
+
+struct TransformComponent
+{
+	glm::vec3 _translate;
+	glm::vec3 _rotation;
+	glm::vec3 _scale;
+
+	TransformComponent() = default;
+	TransformComponent(const TransformComponent&) = default;
+	TransformComponent(glm::vec3 translate, glm::vec3 rotation, glm::vec3 scale)
+		: _translate(translate), _rotation(rotation), _scale(scale) {}
+};
+
+struct PointLightComponent
+{
+	glm::vec3 position;
+	glm::vec3 ambient;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
+
+	float constant;
+	float linear;
+	float quadratic;
+
+	PointLightComponent() = default;
+	PointLightComponent(const PointLightComponent&) = default;
+	PointLightComponent(glm::vec3 pos, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec, float consta, float linea, float quad) 
+		: position(pos), ambient(amb), diffuse(diff), specular(spec), constant(consta), linear(linea), quadratic(quad) {}
+};
+
 void DummyGame::onInit(GLFWwindow *window)
 {
 	std::cout << "Initialized" << std::endl;
-	program = new Extonic::ShaderProgram();
-	setupLights();
+	//program = new Extonic::ShaderProgram();
+	lightsShader = new Extonic::LightShader();
 	setupAttribs();
+	setupLights();
 
 	glfwSetScrollCallback(window, scroll_callback);
 
@@ -126,7 +62,6 @@ void DummyGame::onInit(GLFWwindow *window)
 	m_Registry.emplace<TagComponent>(entity, "test");
 
 	glEnable(GL_DEPTH_TEST);
-	
 }
 
 bool firstMouse = true;
@@ -142,10 +77,36 @@ void DummyGame::scroll_callback(GLFWwindow* window, double xoffset, double yoffs
 	camera.ProcessMouseScroll(yoffset);
 }
 
+glm::vec3 pointLightPositions[] = {
+		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f,  2.0f, -12.0f),
+		glm::vec3(0.0f,  0.0f, -3.0f)
+};
+
+
 void DummyGame::setupLights()
 {
-	lightShader.createShader(lightVertex, lightFragment);
-	lightCubeShader.createShader(lightCubeVertex, lightCubeFragment);
+	lightShader.createShader(Extonic::Util::loadFileAsString("resources/shaders/lightVertex.glsl").c_str(), Extonic::Util::loadFileAsString("resources/shaders/lightFragment.glsl").c_str());
+	lightCubeShader.createShader(Extonic::Util::loadFileAsString("resources/shaders/lightCubeVertex.glsl").c_str(), Extonic::Util::loadFileAsString("resources/shaders/lightCubeFragment.glsl").c_str());
+
+	PointLight light1;
+	light1.position = pointLightPositions[0];
+	light1.ambient = glm::vec3(0.05f);
+	light1.diffuse = glm::vec3(0.8f);
+	light1.specular = glm::vec3(1.0f);
+	light1.constant = 1.0f;
+	light1.linear = 0.09f;
+	light1.quadratic = 0.032f;
+
+
+	lightsShader->addLight(light1, 0);
+	light1.position = pointLightPositions[1];
+	lightsShader->addLight(light1, 1);
+	light1.position = pointLightPositions[2];
+	lightsShader->addLight(light1, 2);
+	light1.position = pointLightPositions[3];
+	lightsShader->addLight(light1, 3);
 
 	glGenVertexArrays(1, &lightVAO);
 	glBindVertexArray(lightVAO);
@@ -210,23 +171,24 @@ void DummyGame::onUpdate(float delta)
 }
 
 glm::vec3 cubePositions[] = {
-	glm::vec3(0.0f,  0.0f,  0.0f),
-	glm::vec3(2.0f,  5.0f, -15.0f),
-	glm::vec3(-1.5f, -2.2f, -2.5f),
-	glm::vec3(-3.8f, -2.0f, -12.3f),
-	glm::vec3(2.4f, -0.4f, -3.5f),
-	glm::vec3(-1.7f,  3.0f, -7.5f),
-	glm::vec3(1.3f, -2.0f, -2.5f),
-	glm::vec3(1.5f,  2.0f, -2.5f),
-	glm::vec3(1.5f,  0.2f, -1.5f),
-	glm::vec3(-1.3f,  1.0f, -1.5f)
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
 struct Material {
 	Extonic::Texture diffuse;
 	Extonic::Texture specular;
 	Extonic::Texture emissive;
-
+	glm::vec3 emissiveColor;
+	float emissiveBrightness;
 	float shininess;
 };
 
@@ -247,7 +209,9 @@ void DummyGame::onRender()
 	material.diffuse = texture;
 	material.specular = specular;
 	material.emissive = emissive;
-	material.shininess = 64.0f;
+	material.emissiveColor = glm::vec3(1.0f, 0.5f, 0.31f);
+	material.emissiveBrightness = 5.0f;
+	material.shininess = 32.0f;
 
 	float timeValue = glfwGetTime();
 	float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
@@ -255,34 +219,71 @@ void DummyGame::onRender()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.2f, 0.3f, 0.3f, 1);
 
-
 	//program->use();
 	lightShader.use();
-	lightShader.uniform3f("objectColor", coral);
-	lightShader.uniform3f("lightColor", lightColor);
-	lightShader.uniform3f("lightPos", lightPos);
+
+	lightShader.uniform1f("useSpotLight", 1);
 	lightShader.uniform3f("viewPos", camera.Position);
 	lightShader.uniform1f("material.shininess", material.shininess);
 	lightShader.uniform1i("material.diffuse", 0);
 	lightShader.uniform1i("material.specular", 1);
 	lightShader.uniform1i("material.emission", 2);
+	lightShader.uniform1f("material.emissiveBrightness", material.emissiveBrightness);
 
-	lightShader.uniform1f("time", glfwGetTime());
+	lightShader.uniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
+	lightShader.uniform3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	lightShader.uniform3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+	lightShader.uniform3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
-	/*lightColor.x = sin(glfwGetTime() * 2.0f);
-	lightColor.y = sin(glfwGetTime() * 0.7f);
-	lightColor.z = sin(glfwGetTime() * 1.3f);*/
+	//lightsShader->updateUniforms();
 
-	glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
-	glm::vec3 ambientColor = diffuseColor * glm::vec3(0.5f);
+	lightShader.uniform3f("pointLights[0].position", pointLightPositions[0]);
+	lightShader.uniform3f("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+	lightShader.uniform3f("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+	lightShader.uniform3f("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+	lightShader.uniform1f("pointLights[0].constant", 1.0f);
+	lightShader.uniform1f("pointLights[0].linear", 0.09f);
+	lightShader.uniform1f("pointLights[0].quadratic", 0.032f);
 
-	light.ambient = ambientColor;
-	light.diffuse = diffuseColor;
-	light.specular = glm::vec3(1.0f);
+	lightShader.uniform3f("pointLights[1].position", pointLightPositions[1]);
+	lightShader.uniform3f("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+	lightShader.uniform3f("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+	lightShader.uniform3f("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+	lightShader.uniform1f("pointLights[1].constant", 1.0f);
+	lightShader.uniform1f("pointLights[1].linear", 0.09f);
+	lightShader.uniform1f("pointLights[1].quadratic", 0.032f);
 
-	lightShader.uniform3f("light.ambient", light.ambient);
-	lightShader.uniform3f("light.diffuse", light.diffuse);
-	lightShader.uniform3f("light.specular", light.specular);
+	lightShader.uniform3f("pointLights[2].position", pointLightPositions[2]);
+	lightShader.uniform3f("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+	lightShader.uniform3f("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+	lightShader.uniform3f("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+	lightShader.uniform1f("pointLights[2].constant", 1.0f);
+	lightShader.uniform1f("pointLights[2].linear", 0.09f);
+	lightShader.uniform1f("pointLights[2].quadratic", 0.032f);
+
+	lightShader.uniform3f("pointLights[3].position", pointLightPositions[3]);
+	lightShader.uniform3f("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+	lightShader.uniform3f("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+	lightShader.uniform3f("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+	lightShader.uniform1f("pointLights[3].constant", 1.0f);
+	lightShader.uniform1f("pointLights[3].linear", 0.09f);
+	lightShader.uniform1f("pointLights[3].quadratic", 0.032f);
+
+
+	lightShader.uniform3f("spotLight.position", camera.Position);
+	lightShader.uniform3f("spotLight.direction", camera.Front);
+	lightShader.uniform3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+	lightShader.uniform3f("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+	lightShader.uniform3f("spotLight.specular", 1.0f, 1.0f, 1.0f);
+	lightShader.uniform1f("spotLight.constant", 1.0f);
+	lightShader.uniform1f("spotLight.linear", 0.09);
+	lightShader.uniform1f("spotLight.quadratic", 0.032);
+	lightShader.uniform1f("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+	lightShader.uniform1f("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+
+	//lightShader.uniform3f("light.ambient", light.ambient);
+	//lightShader.uniform3f("light.diffuse", light.diffuse);
+	//lightShader.uniform3f("light.specular", light.specular);
 	texture.bind();
 
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
@@ -294,7 +295,8 @@ void DummyGame::onRender()
 	lightShader.matrix4f("view", view);
 
 	glm::mat4 model = glm::mat4(1.0f);
-	lightShader.matrix4f("model", model);
+	//lightShader.matrix4f("model", model);
+	
 
 	glActiveTexture(GL_TEXTURE0);
 	material.diffuse.bind();
@@ -302,28 +304,43 @@ void DummyGame::onRender()
 	glActiveTexture(GL_TEXTURE1);
 	material.specular.bind();
 
-	glActiveTexture(GL_TEXTURE2);
-	material.emissive.bind();
+	//glActiveTexture(GL_TEXTURE2);
+	//material.emissive.bind();
 
 	glBindVertexArray(VAO);
+
+	for (unsigned int i = 0; i < sizeof(cubePositions) / sizeof(cubePositions[0]); i++)
+	{
+		model = glm::translate(model, cubePositions[i]);
+		lightShader.matrix4f("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0, -5, 0));
+	model = glm::scale(model, glm::vec3(100.0f, 0.5f, 100.0f));
+	lightShader.matrix4f("model", model);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
-	float lightX = 2.0f * sin(glfwGetTime());
-	float lightY = 0.0f;
-	float lightZ = 1.5f * cos(glfwGetTime());
-	lightPos = glm::vec3(lightX, lightY, lightZ);
+	//float lightX = 2.0f * sin(glfwGetTime());
+	//float lightY = 3.0f;
+	//float lightZ = 1.5f * cos(glfwGetTime());
+	//lightPos = glm::vec3(lightX, lightY, lightZ);
+
+	lightShader.unbind();
 
 	lightCubeShader.use();
 	lightCubeShader.matrix4f("projection", projection);
 	lightCubeShader.matrix4f("view", view);
-	lightCubeShader.uniform3f("lightColor", lightColor);
-	model = glm::mat4(1.0f);
-	model = glm::translate(model, lightPos);
-	model = glm::scale(model, glm::vec3(0.2f));
-	lightCubeShader.matrix4f("model", model);
-
-	//glBindVertexArray(lightVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	lightCubeShader.uniform3f("lightColor", 1.0f, 1.0f, 1.0f);
+	for (unsigned int i = 0; i < 4; i++)
+	{
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, pointLightPositions[i]);
+		model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
+		lightCubeShader.matrix4f("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
 
 	lightCubeShader.unbind();
 	//program->unbind();
@@ -336,7 +353,7 @@ void DummyGame::setupAttribs()
 	const char *fragmentCode = Extonic::Util::loadShader("resources/shaders/fragment2.fs");
 	program->createShader(vertexCode, fragmentCode); */
 
-	program->createDefaultShader();
+	//program->createDefaultShader();
 	createMesh();
 	createTexture();
 
@@ -350,10 +367,10 @@ void DummyGame::setupAttribs()
 	glm::mat4 projection = glm::mat4(1.0f);
 	
 
-	program->use();
-	program->matrix4f("model", model);
-	program->matrix4f("view", view);
-	program->unbind();
+	//program->use();
+	//program->matrix4f("model", model);
+	//program->matrix4f("view", view);
+	//program->unbind();
 }
 
 void DummyGame::createMesh()
@@ -444,6 +461,7 @@ void DummyGame::createTexture()
 
 DummyGame::~DummyGame()
 {
+	delete lightsShader;
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);

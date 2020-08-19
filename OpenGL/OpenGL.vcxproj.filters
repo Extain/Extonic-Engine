@@ -40,6 +40,9 @@
     <Filter Include="Header Files\engine\camera">
       <UniqueIdentifier>{bca89f29-064c-4c73-858f-2d4421ca6d77}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\engine\lights">
+      <UniqueIdentifier>{b437478e-da25-481d-8100-959cf6116418}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\libs\glad\src\gl.c">
@@ -56,6 +59,12 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="LightShader.cpp">
+      <Filter>Source Files\engine\shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utils\Utility.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +100,12 @@
     </ClInclude>
     <ClInclude Include="FirstPersonCamera.h">
       <Filter>Header Files\engine\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="LightShader.h">
+      <Filter>Header Files\engine\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights.h">
+      <Filter>Header Files\engine\lights</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

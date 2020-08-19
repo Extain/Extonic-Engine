@@ -1,5 +1,6 @@
-#pragma once
-#include <glad/gl.h>
+#ifndef TEXTURE_H
+#define TEXTURE_H
+
 #include <stb_image.h>
 #include <iostream>
 
@@ -24,3 +25,4 @@ namespace Extonic {
 	};
 }
 
+#endif

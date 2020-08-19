@@ -154,7 +154,9 @@
     <ClCompile Include="engine\Engine.cpp" />
     <ClCompile Include="engine\shaders\ShaderProgram.cpp" />
     <ClCompile Include="engine\Window.cpp" />
+    <ClCompile Include="LightShader.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="engine\Utils\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -166,6 +168,8 @@
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="IGame.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Lights.h" />
+    <ClInclude Include="LightShader.h" />
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="Texture.h" />
   </ItemGroup>
