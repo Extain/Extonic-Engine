@@ -18,6 +18,27 @@ struct TagComponent
 	TagComponent(const std::string& tag) : Tag(tag) {}	
 };
 
+
+struct TransformComponent
+{
+	glm::vec3 _translate;
+	glm::vec3 _rotation;
+	glm::vec3 _scale;
+
+	TransformComponent() = default;
+	TransformComponent(const TransformComponent&) = default;
+	TransformComponent(glm::vec3 translate, glm::vec3 rotation, glm::vec3 scale)
+		: _translate(translate), _rotation(rotation), _scale(scale) {}
+};
+
+struct PointLightComponent
+{
+	glm::vec3 ambient;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
+
+};
+
 void DummyGame::onInit(GLFWwindow *window)
 {
 	std::cout << "Initialized" << std::endl;
