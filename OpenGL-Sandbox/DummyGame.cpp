@@ -2,7 +2,7 @@
 
 
 Extonic::PerspectiveCamera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-Extonic::ShaderProgram lightCubeShader;
+Extonic::ShaderProgram lightShader, lightCubeShader;
 Extonic::LightShader* lightsShader;
 glm::vec3 coral(1.0f, 1.0f, 1.0f);
 glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
@@ -33,10 +33,19 @@ struct TransformComponent
 
 struct PointLightComponent
 {
+	glm::vec3 position;
 	glm::vec3 ambient;
 	glm::vec3 diffuse;
 	glm::vec3 specular;
 
+	float constant;
+	float linear;
+	float quadratic;
+
+	PointLightComponent() = default;
+	PointLightComponent(const PointLightComponent&) = default;
+	PointLightComponent(glm::vec3 pos, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec, float consta, float linea, float quad) 
+		: position(pos), ambient(amb), diffuse(diff), specular(spec), constant(consta), linear(linea), quadratic(quad) {}
 };
 
 void DummyGame::onInit(GLFWwindow *window)
@@ -75,10 +84,29 @@ glm::vec3 pointLightPositions[] = {
 		glm::vec3(0.0f,  0.0f, -3.0f)
 };
 
+
 void DummyGame::setupLights()
 {
-	//lightShader.createShader(Extonic::Util::loadFileAsString("resources/shaders/lightVertex.glsl").c_str(), Extonic::Util::loadFileAsString("resources/shaders/lightFragment.glsl").c_str());
+	lightShader.createShader(Extonic::Util::loadFileAsString("resources/shaders/lightVertex.glsl").c_str(), Extonic::Util::loadFileAsString("resources/shaders/lightFragment.glsl").c_str());
 	lightCubeShader.createShader(Extonic::Util::loadFileAsString("resources/shaders/lightCubeVertex.glsl").c_str(), Extonic::Util::loadFileAsString("resources/shaders/lightCubeFragment.glsl").c_str());
+
+	PointLight light1;
+	light1.position = pointLightPositions[0];
+	light1.ambient = glm::vec3(0.05f);
+	light1.diffuse = glm::vec3(0.8f);
+	light1.specular = glm::vec3(1.0f);
+	light1.constant = 1.0f;
+	light1.linear = 0.09f;
+	light1.quadratic = 0.032f;
+
+
+	lightsShader->addLight(light1, 0);
+	light1.position = pointLightPositions[1];
+	lightsShader->addLight(light1, 1);
+	light1.position = pointLightPositions[2];
+	lightsShader->addLight(light1, 2);
+	light1.position = pointLightPositions[3];
+	lightsShader->addLight(light1, 3);
 
 	glGenVertexArrays(1, &lightVAO);
 	glBindVertexArray(lightVAO);
@@ -192,40 +220,24 @@ void DummyGame::onRender()
 	glClearColor(0.2f, 0.3f, 0.3f, 1);
 
 	//program->use();
-	lightsShader->use();
+	lightShader.use();
 
-	lightsShader->getShader().uniform1f("useSpotLight", 0);
-	lightsShader->getShader().uniform3f("viewPos", camera.Position);
-	lightsShader->getShader().uniform1f("material.shininess", material.shininess);
-	lightsShader->getShader().uniform1i("material.diffuse", 0);
-	lightsShader->getShader().uniform1i("material.specular", 1);
-	lightsShader->getShader().uniform1i("material.emission", 2);
-	lightsShader->getShader().uniform1f("material.emissiveBrightness", material.emissiveBrightness);
+	lightShader.uniform1f("useSpotLight", 1);
+	lightShader.uniform3f("viewPos", camera.Position);
+	lightShader.uniform1f("material.shininess", material.shininess);
+	lightShader.uniform1i("material.diffuse", 0);
+	lightShader.uniform1i("material.specular", 1);
+	lightShader.uniform1i("material.emission", 2);
+	lightShader.uniform1f("material.emissiveBrightness", material.emissiveBrightness);
 
-	lightsShader->getShader().uniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
-	lightsShader->getShader().uniform3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-	lightsShader->getShader().uniform3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-	lightsShader->getShader().uniform3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
+	lightShader.uniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
+	lightShader.uniform3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	lightShader.uniform3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+	lightShader.uniform3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
-	PointLight light1;
-	light1.position = pointLightPositions[0];
-	light1.ambient = glm::vec3(0.05f);
-	light1.diffuse = glm::vec3(0.8f);
-	light1.specular = glm::vec3(1.0f);
-	light1.constant = 1.0f;
-	light1.linear = 0.09f;
-	light1.quadratic = 0.032f;
+	//lightsShader->updateUniforms();
 
-	lightsShader->addLight(light1, 0);
-	light1.position = pointLightPositions[1];
-	lightsShader->addLight(light1, 1);
-	light1.position = pointLightPositions[2];
-	lightsShader->addLight(light1, 2);
-	light1.position = pointLightPositions[3];
-	lightsShader->addLight(light1, 3);
-	lightsShader->updateUniforms();
-
-	/*lightShader.uniform3f("pointLights[0].position", pointLightPositions[0]);
+	lightShader.uniform3f("pointLights[0].position", pointLightPositions[0]);
 	lightShader.uniform3f("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
 	lightShader.uniform3f("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
 	lightShader.uniform3f("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
@@ -255,19 +267,19 @@ void DummyGame::onRender()
 	lightShader.uniform3f("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
 	lightShader.uniform1f("pointLights[3].constant", 1.0f);
 	lightShader.uniform1f("pointLights[3].linear", 0.09f);
-	lightShader.uniform1f("pointLights[3].quadratic", 0.032f);*/
+	lightShader.uniform1f("pointLights[3].quadratic", 0.032f);
 
 
-	lightsShader->getShader().uniform3f("spotLight.position", camera.Position);
-	lightsShader->getShader().uniform3f("spotLight.direction", camera.Front);
-	lightsShader->getShader().uniform3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-	lightsShader->getShader().uniform3f("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-	lightsShader->getShader().uniform3f("spotLight.specular", 1.0f, 1.0f, 1.0f);
-	lightsShader->getShader().uniform1f("spotLight.constant", 1.0f);
-	lightsShader->getShader().uniform1f("spotLight.linear", 0.09);
-	lightsShader->getShader().uniform1f("spotLight.quadratic", 0.032);
-	lightsShader->getShader().uniform1f("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-	lightsShader->getShader().uniform1f("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+	lightShader.uniform3f("spotLight.position", camera.Position);
+	lightShader.uniform3f("spotLight.direction", camera.Front);
+	lightShader.uniform3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+	lightShader.uniform3f("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+	lightShader.uniform3f("spotLight.specular", 1.0f, 1.0f, 1.0f);
+	lightShader.uniform1f("spotLight.constant", 1.0f);
+	lightShader.uniform1f("spotLight.linear", 0.09);
+	lightShader.uniform1f("spotLight.quadratic", 0.032);
+	lightShader.uniform1f("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+	lightShader.uniform1f("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
 	//lightShader.uniform3f("light.ambient", light.ambient);
 	//lightShader.uniform3f("light.diffuse", light.diffuse);
@@ -277,10 +289,10 @@ void DummyGame::onRender()
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
 	//glm::mat4 projection = glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, 0.1f, 100.0f);
 
-	lightsShader->getShader().matrix4f("projection", projection);
+	lightShader.matrix4f("projection", projection);
 
 	glm::mat4 view = camera.GetViewMatrix();
-	lightsShader->getShader().matrix4f("view", view);
+	lightShader.matrix4f("view", view);
 
 	glm::mat4 model = glm::mat4(1.0f);
 	//lightShader.matrix4f("model", model);
@@ -292,28 +304,30 @@ void DummyGame::onRender()
 	glActiveTexture(GL_TEXTURE1);
 	material.specular.bind();
 
-	glActiveTexture(GL_TEXTURE2);
-	material.emissive.bind();
+	//glActiveTexture(GL_TEXTURE2);
+	//material.emissive.bind();
 
 	glBindVertexArray(VAO);
 
-	for (unsigned int i = 0; i < sizeof(cubePositions); i++)
+	for (unsigned int i = 0; i < sizeof(cubePositions) / sizeof(cubePositions[0]); i++)
 	{
 		model = glm::translate(model, cubePositions[i]);
-		lightsShader->getShader().matrix4f("model", model);
+		lightShader.matrix4f("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 
 	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0, -5, 0));
 	model = glm::scale(model, glm::vec3(100.0f, 0.5f, 100.0f));
-	lightsShader->getShader().matrix4f("model", model);
+	lightShader.matrix4f("model", model);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	//float lightX = 2.0f * sin(glfwGetTime());
 	//float lightY = 3.0f;
 	//float lightZ = 1.5f * cos(glfwGetTime());
 	//lightPos = glm::vec3(lightX, lightY, lightZ);
+
+	lightShader.unbind();
 
 	lightCubeShader.use();
 	lightCubeShader.matrix4f("projection", projection);
@@ -327,9 +341,6 @@ void DummyGame::onRender()
 		lightCubeShader.matrix4f("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
-
-	//glBindVertexArray(lightVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	lightCubeShader.unbind();
 	//program->unbind();

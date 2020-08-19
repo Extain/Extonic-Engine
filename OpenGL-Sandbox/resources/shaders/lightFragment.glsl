@@ -84,10 +84,7 @@ void main()
     for(int i = 0; i < NR_POINT_LIGHTS; i++)
         result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
     // phase 3: spot light
-    if (useSpotLight == 1) result += CalcSpotLight(spotLight, norm, FragPos, viewDir);
-    vec3 emission = calcEmission();
-    emission = emission * material.emissiveColor * material.emissiveBrightness;
-    //result + emission;    
+    if (useSpotLight == 1) result += CalcSpotLight(spotLight, norm, FragPos, viewDir); 
     
     FragColor = vec4(result, 1.0);
 }

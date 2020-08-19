@@ -15,7 +15,6 @@ namespace Extonic {
             std::getline(ifs, line);
             fileText.append(line + "\n");
         }
-
         return fileText;
     }
 

@@ -87,7 +87,6 @@ namespace Extonic {
 	void ShaderProgram::uniform3f(const std::string& uniform, glm::vec3& value)
 	{
 		glUniform3fv(glGetUniformLocation(this->shaderID, uniform.c_str()), 1, &value[0]);
-		std::cout << uniform << std::endl;
 	}
 
 	void ShaderProgram::uniform3f(const std::string& uniform, float x, float y, float z)

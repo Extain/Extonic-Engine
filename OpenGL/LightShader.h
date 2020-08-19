@@ -12,6 +12,7 @@ namespace Extonic {
 	{
 	public:
 		LightShader();
+		~LightShader();
 
 		void updateUniforms();
 
@@ -20,6 +21,12 @@ namespace Extonic {
 			if (lights.size() <= 3)
 				lights.push_back(pointLight);
 		}
+
+		/*virtual void addLight(SpotLight spotLight, int pos)
+		{
+			if (lights.size() <= 1)
+				spotLights.push_back(spotLight);
+		}*/
 
 		virtual ShaderProgram getShader() { return *program; }
 
@@ -30,6 +37,7 @@ namespace Extonic {
 	private:
 		ShaderProgram* program;
 		std::vector<PointLight> lights;
+		//std::vector<SpotLight> spotLights;
 	};
 }
 #endif
