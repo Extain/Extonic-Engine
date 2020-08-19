@@ -1,4 +1,5 @@
 #include "Texture.h"
+#include <glad\gl.h>
 
 namespace Extonic {
 	void Texture::createTexture(const char* fileName)

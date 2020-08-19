@@ -1,14 +1,15 @@
 #ifndef DUMMYGAME_H
 #define DUMMYGAME_H
 
-#include "engine/shaders/ShaderProgram.h"
-#include "IGame.h"
-#include <iostream>
+#include <glad/gl.h>
+#include <IGame.h>
+#include <engine\Engine.h>
 #include <functional>
 #include <Texture.h>
-#include <GLFW\glfw3.h>
+#include <LightShader.h>
 #include <PerspectiveCamera.h>
-#include <entt.hpp>
+#include <entt.hpp> 
+#include <Input.h>
 
 #define LOG(x) std::cout << x << std::endl;
 
@@ -20,7 +21,7 @@ public:
 	virtual void onRender();
 	~DummyGame();
 private:
-	Extonic::ShaderProgram* program;
+	//Extonic::ShaderProgram* program;
 	void setupAttribs();
 	unsigned int lightVAO;
 	unsigned int VAO;
@@ -36,5 +37,4 @@ private:
 	void createTexture();
 	entt::registry m_Registry;
 };
-
 #endif

@@ -1,12 +1,14 @@
-#pragma once
+#ifndef SHADER_PROGRAM_H
+#define SHADER_PROGRAM_H
+
 #include <iostream>
 #include <map>
 #include <string>
-#include <glad\gl.h>
 #include <ext\vector_float4.hpp>
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
+#include <glad\gl.h>
 
 
 namespace Extonic {
@@ -63,3 +65,4 @@ namespace Extonic {
         std::map<std::string, int> uniforms;
     };
 }
+#endif

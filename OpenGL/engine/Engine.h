@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ENGINE_H
+#define ENGINE_H
 #include "Window.h"
 #include "../IGame.h"
 #include <chrono>
@@ -22,3 +23,4 @@ namespace Extonic {
 		Window* window;
 	};
 }
+#endif

@@ -1,10 +1,9 @@
 #include "Engine.h"
-#include <iostream>
 
 using namespace std::chrono_literals;
 
 namespace Extonic {
-	Engine::Engine(IGame& gme, const char* title, int width, int height) : game(gme)
+	Engine::Engine(IGame& gme, const char* title, int width, int height) : game(gme), fps(0), ups(0)
 	{
 		window = new Window(title, width, height);
 	}
@@ -33,6 +32,7 @@ namespace Extonic {
 				accumulator -= timeDelta;
 				deltaTime = startTime - lastTime;
 				update(deltaTime);
+				ups = deltaTime;
 				lastTime = startTime;
 				now += timeDelta;
 			}
@@ -58,6 +58,6 @@ namespace Extonic {
 
 	Engine::~Engine()
 	{
-
+		delete window;
 	}
 }
