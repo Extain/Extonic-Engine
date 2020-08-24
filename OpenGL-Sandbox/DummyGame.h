@@ -5,9 +5,9 @@
 #include <IGame.h>
 #include <engine\Engine.h>
 #include <functional>
-#include <Texture.h>
-#include <LightShader.h>
-#include <PerspectiveCamera.h>
+#include <engine\graphics\Texture.h>
+#include <engine\shaders\LightShader.h>
+#include <engine\camera\PerspectiveCamera.h>
 #include <entt.hpp> 
 #include <Input.h>
 

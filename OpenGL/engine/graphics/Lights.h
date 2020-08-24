@@ -18,7 +18,7 @@ struct SpotLight {
 	glm::vec3 direction;
 
 	float cutOff;
-	float outerCustOff;
+	float outerCutOff;
 	
 	float constant;
 	float linear;
@@ -30,6 +30,9 @@ struct SpotLight {
 };
 
 struct DirLight {
-
+	glm::vec3 direction;
+	glm::vec3 ambient;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
 };
 #endif
