@@ -154,24 +154,24 @@
     <ClCompile Include="engine\Engine.cpp" />
     <ClCompile Include="engine\shaders\ShaderProgram.cpp" />
     <ClCompile Include="engine\Window.cpp" />
-    <ClCompile Include="LightShader.cpp" />
-    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="engine\shaders\LightShader.cpp" />
+    <ClCompile Include="engine\graphics\Texture.cpp" />
     <ClCompile Include="engine\Utils\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
+    <ClInclude Include="engine\camera\Camera.h" />
     <ClInclude Include="engine\Engine.h" />
     <ClInclude Include="engine\shaders\ShaderProgram.h" />
     <ClInclude Include="engine\Utils\Utility.h" />
     <ClInclude Include="engine\Window.h" />
-    <ClInclude Include="FirstPersonCamera.h" />
+    <ClInclude Include="engine\camera\FirstPersonCamera.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="IGame.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="Lights.h" />
-    <ClInclude Include="LightShader.h" />
-    <ClInclude Include="PerspectiveCamera.h" />
-    <ClInclude Include="Texture.h" />
+    <ClInclude Include="engine\graphics\Lights.h" />
+    <ClInclude Include="engine\shaders\LightShader.h" />
+    <ClInclude Include="engine\camera\PerspectiveCamera.h" />
+    <ClInclude Include="engine\graphics\Texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

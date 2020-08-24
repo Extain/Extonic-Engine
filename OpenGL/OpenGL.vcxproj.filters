@@ -57,14 +57,14 @@
     <ClCompile Include="engine\shaders\ShaderProgram.cpp">
       <Filter>Source Files\engine\shaders</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\engine</Filter>
+    <ClCompile Include="engine\Utils\Utility.cpp">
+      <Filter>Source Files\engine\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="LightShader.cpp">
+    <ClCompile Include="engine\shaders\LightShader.cpp">
       <Filter>Source Files\engine\shaders</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Utils\Utility.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="engine\graphics\Texture.cpp">
+      <Filter>Source Files\engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,25 +86,25 @@
     <ClInclude Include="FrameBuffer.h">
       <Filter>Header Files\engine</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files\engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files\engine\camera</Filter>
-    </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Header Files\engine</Filter>
     </ClInclude>
-    <ClInclude Include="PerspectiveCamera.h">
+    <ClInclude Include="engine\camera\Camera.h">
       <Filter>Header Files\engine\camera</Filter>
     </ClInclude>
-    <ClInclude Include="FirstPersonCamera.h">
+    <ClInclude Include="engine\camera\FirstPersonCamera.h">
       <Filter>Header Files\engine\camera</Filter>
     </ClInclude>
-    <ClInclude Include="LightShader.h">
+    <ClInclude Include="engine\camera\PerspectiveCamera.h">
+      <Filter>Header Files\engine\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\shaders\LightShader.h">
       <Filter>Header Files\engine\shaders</Filter>
     </ClInclude>
-    <ClInclude Include="Lights.h">
+    <ClInclude Include="engine\graphics\Texture.h">
+      <Filter>Header Files\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\graphics\Lights.h">
       <Filter>Header Files\engine\lights</Filter>
     </ClInclude>
   </ItemGroup>
